@@ -1,3 +1,7 @@
+require('deathball')
+require('deathball_game_round')
+
+
 -- Generated from template
 
 if CAddonTemplateGameMode == nil then
@@ -16,10 +20,10 @@ end
 
 -- Create the game mode when we activate
 function Activate()
-	GameRules.AddonTemplate = CAddonTemplateGameMode()
-	GameRules.AddonTemplate:InitGameMode()
+	GameRules.deathball = DeathballGameMode()
+	GameRules.DeathballGameMode:InitGameMode()
 end
-
+--[[	Not sure if needed
 function CAddonTemplateGameMode:InitGameMode()
 	print( "Template addon is loaded." )
 	GameRules:GetGameModeEntity():SetThink( "OnThink", self, "GlobalThink", 2 )
@@ -34,3 +38,5 @@ function CAddonTemplateGameMode:OnThink()
 	end
 	return 1
 end
+
+]]
