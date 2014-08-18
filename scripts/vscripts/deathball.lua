@@ -64,9 +64,9 @@ end
 
 function DeathballGameMode:Goal( team )
 	if team == 'good' then
-		self.nRadiantScore++
+		self.nRadiantScore = self.nRadiantScore + 1
 	elseif team == 'bad' then
-		self.nDireScore++
+		self.nDireScore = self.nDireScore + 1
 	end
 
 	GameMode:SetTopBarTeamValue( DOTA_TEAM_BADGUYS, self.nDireScore )
