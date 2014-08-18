@@ -23,16 +23,13 @@ function DeathballGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetTopBarTeamValuesOverride( true )
 	GameRules:GetGameModeEntity():SetTopBarTeamValuesVisible( false )
 
-	-- Set all hero's movement speed to 522. 
-	--		TODO: change to read from keyvalue file
-	ListenToGameEvent('npc_spawned', function(keys)
-			-- Grab the unit that spawned
-			local spawnedUnit = EntIndexToHScript(keys.entindex)
-			-- Make sure it is a hero
-			if spawnedUnit:IsHero() then
-				spawnedUnit:SetBaseMoveSpeed( 522 )
-			end
-		end, nil)
+	-- Event Listeners
+	ListenToGameEvent( 'npc_spawned', Dynamic_Wrap(DeathballGameMode, OnNPCSpawned), nil )
+
+	-- Scoreboard
+	self.nRadiantScore = 0
+	self.nDireScore = 0
+
 
 
 end
@@ -47,6 +44,16 @@ function DeathballGameMode:OnThink()
 	return 1
 end
 
+function DeathballGameMode:OnNPCSpawned( keys )
+	-- Set all hero's movement speed to 522. 
+	--		TODO: change to read from keyvalue file
+	local spawnedUnit = EntIndexToHScript( keys.entindex )
+	
+	if spawnedUnit:IsHero() then
+		spawnedUnit:SetBaseMoveSpeed( 522 )
+	end
+end
+
 function DeathballGameMode:_ReadGameConfiguration()
 	local kv = LoadKeyValues( "scripts/maps/" .. GetMapName() .. ".txt" )
 	kv = kv or {} -- if no keyvalues file
@@ -55,3 +62,13 @@ function DeathballGameMode:_ReadGameConfiguration()
 	-- 	self._bAlwaysShowPlayerGold = kv.AlwaysShowPlayerGold or false
 end
 
+function DeathballGameMode:Goal( team )
+	if team == 'good' then
+		self.nRadiantScore++
+	elseif team == 'bad' then
+		self.nDireScore++
+	end
+
+	GameMode:SetTopBarTeamValue( DOTA_TEAM_BADGUYS, self.nDireScore )
+	GameMode:SetTopBarTeamValue( DOTA_TEAM_GOODGUYS, self.nRadiantScore )
+end
